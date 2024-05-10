@@ -1,10 +1,10 @@
 #pragma once
 #include <array>
-#include <bitset>
-#include <iostream>
+#include <cstdint>
+#include <ostream>
 #include <stack>
 
-#include <stdint.h>
+#include "graph_mapper/graphs/graph_concepts.hpp"
 
 namespace wind::gm
 {
@@ -12,12 +12,22 @@ namespace wind::gm
 struct Graph
 {
 public:
-  constexpr auto vertices(this const auto& self) -> int32_t
+  constexpr auto operator==(const Graph& other) const -> bool = default;
+
+  constexpr auto get_vertices(this const auto& self) -> uint32_t
   {
-    return self.vertices();
+    using type = std::remove_cvref_t<decltype(self)>;
+    return type::vertices;
   }
 
-  constexpr auto has_edge(this const auto& self, int32_t v1, int32_t v2) -> bool
+  constexpr auto set_edge(this const auto& self, uint32_t v1, uint32_t v2)
+      -> bool
+  {
+    return self.set_edge(v1, v2);
+  }
+
+  constexpr auto has_edge(this const auto& self, uint32_t v1, uint32_t v2)
+      -> bool
   {
     return self.has_edge(v1, v2);
   }
@@ -26,36 +36,39 @@ public:
   {
     using type = std::remove_cvref_t<decltype(self)>;
 
-    std::array<bool, vertices()> visited = {false};
-    std::stack<int> s;
+    std::array<bool, type::vertices> visited = {false};
+    std::stack<uint32_t> s;
     s.push(0);
 
     auto total = 0;
-    while (!s.empty() && total != type::vertices()) {
+    while (!s.empty()) {
       auto active = s.top();
       visited[active] = true;
       s.pop();
       total++;
-      for (auto i = 0; i < type::vertices(); i++) {
+      for (auto i = 0UL; i < type::vertices; i++) {
         if (i != active && !visited[i] && self.has_edge(active, i)) {
           s.push(i);
         }
       }
     }
-    return total == type::vertices();
+    return total == type::vertices;
   }
 };
 
-auto operator<<(std::ostream& os, const Graph& obj) -> std::ostream&
+static_assert(is_graph<Graph>);
+
+template<is_graph GraphT>
+auto operator<<(std::ostream& os, const GraphT& g) -> std::ostream&
 {
-  auto v = obj.vertices();
-  os << "G(V=" << v << ", E={" << std::endl;
-  for (auto i = 0; i < v; i++) {
+  auto v = g.get_vertices();
+  os << "G(V=" << v << ", ID=" << g.id() << ", E={\n";
+  for (auto i = 0UL; i < v; i++) {
     os << "   ";
-    for (auto j = 0; j < v; j++) {
-      os << obj.has_edge(i, j) << ", ";
+    for (auto j = 0UL; j < v; j++) {
+      os << g.has_edge(i, j) << ", ";
     }
-    os << std::endl;
+    os << "\n";
   }
   return os << "})";
 }

@@ -21,7 +21,7 @@ add_executable(
     source/graph_mapper_test.cpp
     source/graphs/undirected_graph_tests.cpp
     source/main.cpp
-    source/solvers/isomorphism.cpp
+    source/solvers/isomorphism_tests.cpp
 )
 
 target_link_libraries(graph_mapper_test PRIVATE graph_mapper::graph_mapper doctest::doctest)

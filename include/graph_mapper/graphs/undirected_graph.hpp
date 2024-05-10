@@ -1,4 +1,6 @@
 #pragma once
+#include <bitset>
+#include <cstdint>
 
 #include "graph_mapper/graphs/graph_base.hpp"
 
@@ -6,12 +8,15 @@ namespace wind::gm
 {
 
 template<int32_t V>
+  requires(V > 0)
 struct UndirectedGraph : public Graph
 {
   using self_t = UndirectedGraph<V>;
+
   constexpr static auto vertices = V;
-  constexpr static auto max_edges = ((V * (V - 1)) / 2);
+  constexpr static auto max_edges = V == 1 ? 0 : ((V * (V - 1)) / 2);
   constexpr static auto number_of_graphs = 1ULL << self_t::max_edges;
+  constexpr static auto is_undirected = true;
 
   std::bitset<self_t::max_edges> edges;
 
@@ -24,16 +29,19 @@ struct UndirectedGraph : public Graph
   {
   }
 
+  constexpr auto operator==(const UndirectedGraph& other) const
+      -> bool = default;
+
   constexpr auto id() const -> uint64_t { return this->edge_bits(); }
 
-  constexpr auto index(int32_t v1, int32_t v2) const -> size_t
+  constexpr auto index(uint32_t v1, uint32_t v2) const -> size_t
   {
     auto vlow = std::min(v1, v2);
     auto vhigh = std::max(v1, v2);
     return vhigh * (vhigh - 1ULL) / 2ULL + vlow;
   }
 
-  constexpr void set_edge(int32_t v1, int32_t v2, bool val = true)
+  constexpr void set_edge(uint32_t v1, uint32_t v2, bool val = true)
   {
     if (v1 == v2) {
       return;
@@ -41,7 +49,7 @@ struct UndirectedGraph : public Graph
     this->edges.set(this->index(v1, v2), val);
   }
 
-  constexpr auto has_edge(int32_t v1, int32_t v2) const -> bool
+  constexpr auto has_edge(uint32_t v1, uint32_t v2) const -> bool
   {
     if (v1 == v2) {
       return false;
@@ -49,11 +57,13 @@ struct UndirectedGraph : public Graph
     return this->edges[this->index(v1, v2)];
   }
 
-  constexpr auto is_undirected() const -> bool { return true; }
-
   constexpr auto edge_bits() const -> uint64_t
   {
-    return this->edges.to_ullong();
+    if constexpr (V == 1) {
+      return 0;
+    } else {
+      return this->edges.to_ullong();
+    }
   }
 };
 
