@@ -10,6 +10,7 @@ static_assert(UGraph<2>::number_of_graphs == 2);
 static_assert(UGraph<3>::number_of_graphs == 8);
 static_assert(UGraph<4>::number_of_graphs == 64);
 static_assert(UGraph<5>::number_of_graphs == 1024);
+static_assert(UGraph<7>::number_of_graphs == 1ULL << 21);  // 2^21/1024/1024 = 2 MB
 static_assert(UGraph<8>::number_of_graphs == 1ULL << 28);  // 2^28/1024/1024 = 256 MB
 static_assert(UGraph<9>::number_of_graphs == 1ULL << 36);  // 2^36/1024/1024/1024 = 64 GB
 static_assert(UGraph<10>::number_of_graphs == 1ULL << 45);  // 2^45/1024/1024/1024/1024 = 32 TB

@@ -22,6 +22,7 @@ add_executable(
     source/graphs/graph_base_tests.cpp
     source/graphs/undirected_graph_tests.cpp
     source/main.cpp
+    source/solvers/isomorphism_runner.cpp
     source/solvers/isomorphism_tests.cpp
 )
 

@@ -1,11 +1,8 @@
-#include <ranges>
-#include <unordered_set>
-
 #include "graph_mapper/solvers/isomorphism.hpp"
 
 #include <doctest/doctest.h>
 
-#include "graph_mapper/graphs/graph_generator.hpp"
+#include "../test_helpers.h"
 #include "graph_mapper/graphs/undirected_graph.hpp"
 
 namespace wind::gm
@@ -29,15 +26,13 @@ TEST_SUITE("isomorphism::base_id")
     }
   }
 
-  auto all_ok = [](const auto&) { return true; };
-
   TEST_CASE("number of none-isomorphic graphs")
   {
     auto checker = []<int32_t V>()
     {
-      auto unique_graphs = get_all_base_forms_v2<UGraph<V>>(all_ok)
-          | std::ranges::views::transform([](auto g) { return g.id(); }) | std::ranges::to<std::unordered_set>();
-      return unique_graphs.size();
+      auto graphs = get_all_base_forms_v2<UGraph<V>>(all_ok);
+      REQUIRE_EQ(graphs.size(), UGraph<V>::number_of_graphs);
+      return unique_graphs(graphs).size();
     };
 
     // https://cw.fel.cvut.cz/b201/_media/courses/b4m33pal/lectures/isomorphism_notes.pdf
@@ -88,9 +83,8 @@ TEST_SUITE("isomorphism::base_id")
   {
     auto checker = []<int32_t V>()
     {
-      auto unique_graphs = get_all_base_forms_v2<UGraph<V>>([](auto g) { return g.is_connected(); })
-          | std::ranges::views::transform([](auto g) { return g.id(); }) | std::ranges::to<std::unordered_set>();
-      return unique_graphs.size();
+      auto graphs = unique_graphs(get_all_base_forms_v2<UGraph<V>>([](auto g) { return g.is_connected(); }));
+      return graphs.size();
     };
 
     // https://cw.fel.cvut.cz/b201/_media/courses/b4m33pal/lectures/isomorphism_notes.pdf
@@ -119,7 +113,7 @@ TEST_SUITE("isomorphism::base_id")
     {
       CHECK_EQ(checker.operator()<6>(), 112);
     }
-    // SUBCASE("V=7") // fast with Release
+    // SUBCASE("V=7")  // fast with Release
     // {
     //   CHECK_EQ(checker.operator()<7>(), 853);
     // }

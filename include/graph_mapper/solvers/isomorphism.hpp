@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <optional>
 #include <span>
-#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "graph_mapper/graphs/graph_concepts.hpp"
