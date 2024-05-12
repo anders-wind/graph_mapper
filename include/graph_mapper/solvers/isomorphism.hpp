@@ -2,8 +2,12 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <span>
+#include <unordered_map>
+#include <vector>
 
 #include "graph_mapper/graphs/graph_concepts.hpp"
+#include "graph_mapper/graphs/graph_generator.hpp"
 
 namespace wind::gm
 {
@@ -45,6 +49,62 @@ constexpr auto base_form(const GraphT& base, uint32_t current_index = 0) -> Grap
   }
 
   return lowest_id_graph;
+}
+
+template<is_graph GraphT>
+constexpr auto get_all_graphs_with_same_id(const GraphT& base,
+                                           uint32_t current_index,
+                                           std::unordered_set<uint64_t>& out) -> void
+{
+  if (current_index == GraphT::vertices) {
+    out.emplace(base.id());
+    return;
+  }
+
+  if (!out.contains(base.id())) {
+    get_all_graphs_with_same_id(base, current_index + 1, out);
+
+    for (auto i = current_index + 1; i < GraphT::vertices; i++) {
+      get_all_graphs_with_same_id(swap(base, current_index, i), current_index + 1, out);
+    }
+  }
+}
+
+template<is_graph GraphT>
+auto get_all_graphs_with_same_id(const GraphT& base) -> std::vector<GraphT>
+{
+  auto out = std::unordered_set<uint64_t> {};
+  get_all_graphs_with_same_id(base, 0, out);
+  auto transformed = out | std::views::transform([](auto id) { return GraphT(id); });
+  return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
+}
+
+// Assumes all graphs in the group have the same base form. IE found with get_all_graphs_with_same_id
+template<is_graph GraphT>
+auto get_base_form_of_group(std::span<const GraphT> group) -> GraphT
+{
+  return *std::ranges::min_element(group, [](const auto& a, const auto& b) { return a.id() < b.id(); });
+}
+
+template<typename GraphT>
+auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
+{
+  auto cache = std::vector<std::optional<GraphT>>(GraphT::number_of_graphs);
+  for (const auto& g : generate_graphs<GraphT>() | std::views::filter(filter)) {
+    if (cache[g.id()]) {
+      continue;
+    }
+
+    auto group = get_all_graphs_with_same_id(base_form(g));
+    auto base = get_base_form_of_group<GraphT>(group);
+    for (const auto& g_inner : group) {
+      cache[g_inner.id()] = base;
+    }
+  }
+
+  auto transformed = cache | std::views::filter([](const auto& g) { return g.has_value(); })
+      | std::views::transform([](const auto& g) { return g.value(); });
+  return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
 }
 
 }  // namespace wind::gm

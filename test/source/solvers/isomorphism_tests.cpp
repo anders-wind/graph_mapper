@@ -29,13 +29,14 @@ TEST_SUITE("isomorphism::base_id")
     }
   }
 
+  auto all_ok = [](const auto&) { return true; };
+
   TEST_CASE("number of none-isomorphic graphs")
   {
     auto checker = []<int32_t V>()
     {
-      auto unique_graphs = generate_graphs<UGraph<V>>()
-          | std::ranges::views::transform([](auto g) { return base_form(g).id(); })
-          | std::ranges::to<std::unordered_set>();
+      auto unique_graphs = get_all_base_forms_v2<UGraph<V>>(all_ok)
+          | std::ranges::views::transform([](auto g) { return g.id(); }) | std::ranges::to<std::unordered_set>();
       return unique_graphs.size();
     };
 
@@ -61,16 +62,34 @@ TEST_SUITE("isomorphism::base_id")
     {
       CHECK_EQ(checker.operator()<5>(), 34);
     }
+    SUBCASE("V=6")
+    {
+      CHECK_EQ(checker.operator()<6>(), 156);
+    }
+    // SUBCASE("V=7")  // fast with Release
+    // {
+    //   CHECK_EQ(checker.operator()<7>(), 1044ULL);
+    // }
+    // SUBCASE("V=8")  // possible with Release
+    // {
+    //   CHECK_EQ(checker.operator()<8>(), 12346ULL);
+    // }
+    // SUBCASE("V=9")
+    // {
+    //   CHECK_EQ(checker.operator()<9>(), 274668ULL);  // 268KB
+    // }
+    // SUBCASE("V=10")
+    // {
+    //   CHECK_EQ(checker.operator()<10>(), 12005168ULL); // 11MB
+    // }
   }
 
   TEST_CASE("number of none-isomorphic connected graphs")
   {
     auto checker = []<int32_t V>()
     {
-      auto unique_graphs = generate_graphs<UGraph<V>>()
-          | std::ranges::views::filter([](auto g) { return g.is_connected(); })
-          | std::ranges::views::transform([](auto g) { return base_form(g).id(); })
-          | std::ranges::to<std::unordered_set>();
+      auto unique_graphs = get_all_base_forms_v2<UGraph<V>>([](auto g) { return g.is_connected(); })
+          | std::ranges::views::transform([](auto g) { return g.id(); }) | std::ranges::to<std::unordered_set>();
       return unique_graphs.size();
     };
 
@@ -95,6 +114,54 @@ TEST_SUITE("isomorphism::base_id")
     SUBCASE("V=5")
     {
       CHECK_EQ(checker.operator()<5>(), 21);
+    }
+    SUBCASE("V=6")
+    {
+      CHECK_EQ(checker.operator()<6>(), 112);
+    }
+    // SUBCASE("V=7") // fast with Release
+    // {
+    //   CHECK_EQ(checker.operator()<7>(), 853);
+    // }
+    // SUBCASE("V=8") // possible with Release
+    // {
+    //   CHECK_EQ(checker.operator()<8>(), 11117);
+    // }
+    // SUBCASE("V=9")
+    // {
+    //   CHECK_EQ(checker.operator()<9>(), 261080ULL); // 254KB
+    // }
+    // SUBCASE("V=10")
+    // {
+    //   CHECK_EQ(checker.operator()<10>(), 11716571ULL); // 11MB
+    // }
+  }
+
+  TEST_CASE("get_all_graphs_with_same_id")
+  {
+    SUBCASE("edge cases")
+    {
+      auto g = UGraph<5>(0);
+      auto graphs = get_all_graphs_with_same_id(g);
+      CHECK_EQ(graphs.size(), 1ULL);
+      CHECK_EQ(graphs[0], g);
+
+      g = UGraph<5>(UGraph<5>::number_of_graphs - 1);
+      graphs = get_all_graphs_with_same_id(g);
+      CHECK_EQ(graphs.size(), 1ULL);
+      CHECK_EQ(graphs[0], g);
+    }
+
+    SUBCASE("one edge")
+    {
+      auto graphs = get_all_graphs_with_same_id(UGraph<5>(1));
+      CHECK_EQ(graphs.size(), UGraph<5>::max_edges);
+    }
+
+    SUBCASE("n-1 edges")
+    {
+      auto graphs = get_all_graphs_with_same_id(UGraph<5>(UGraph<5>::number_of_graphs - 2));
+      CHECK_EQ(graphs.size(), UGraph<5>::max_edges);
     }
   }
 }
