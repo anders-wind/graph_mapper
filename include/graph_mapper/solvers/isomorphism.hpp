@@ -30,8 +30,7 @@ constexpr auto swap(const GraphT& g, uint32_t v1, uint32_t v2) -> GraphT
 }
 
 template<is_graph GraphT>
-constexpr auto base_form(const GraphT& base, uint32_t current_index = 0)
-    -> GraphT
+constexpr auto base_form(const GraphT& base, uint32_t current_index = 0) -> GraphT
 {
   if (current_index == GraphT::vertices) {
     return base;

@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <doctest/doctest.h>
-
 #include "graph_mapper/graph_mapper.hpp"
+
+#include <doctest/doctest.h>
 
 namespace wind::gm
 {

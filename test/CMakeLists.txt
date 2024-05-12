@@ -19,6 +19,7 @@ find_package(doctest CONFIG REQUIRED)
 add_executable(
     graph_mapper_test
     source/graph_mapper_test.cpp
+    source/graphs/graph_base_tests.cpp
     source/graphs/undirected_graph_tests.cpp
     source/main.cpp
     source/solvers/isomorphism_tests.cpp

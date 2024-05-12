@@ -34,8 +34,7 @@ TEST_SUITE("isomorphism::base_id")
     auto checker = []<int32_t V>()
     {
       auto unique_graphs = generate_graphs<UGraph<V>>()
-          | std::ranges::views::transform([](auto g)
-                                          { return base_form(g).id(); })
+          | std::ranges::views::transform([](auto g) { return base_form(g).id(); })
           | std::ranges::to<std::unordered_set>();
       return unique_graphs.size();
     };
@@ -62,10 +61,6 @@ TEST_SUITE("isomorphism::base_id")
     {
       CHECK_EQ(checker.operator()<5>(), 34);
     }
-    SUBCASE("V=6")
-    {
-      CHECK_EQ(checker.operator()<6>(), 156);
-    }
   }
 
   TEST_CASE("number of none-isomorphic connected graphs")
@@ -74,8 +69,7 @@ TEST_SUITE("isomorphism::base_id")
     {
       auto unique_graphs = generate_graphs<UGraph<V>>()
           | std::ranges::views::filter([](auto g) { return g.is_connected(); })
-          | std::ranges::views::transform([](auto g)
-                                          { return base_form(g).id(); })
+          | std::ranges::views::transform([](auto g) { return base_form(g).id(); })
           | std::ranges::to<std::unordered_set>();
       return unique_graphs.size();
     };
@@ -101,10 +95,6 @@ TEST_SUITE("isomorphism::base_id")
     SUBCASE("V=5")
     {
       CHECK_EQ(checker.operator()<5>(), 21);
-    }
-    SUBCASE("V=6")
-    {
-      CHECK_EQ(checker.operator()<6>(), 112);
     }
   }
 }

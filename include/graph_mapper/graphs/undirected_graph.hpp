@@ -7,7 +7,7 @@
 namespace wind::gm
 {
 
-template<int32_t V>
+template<uint32_t V>
   requires(V > 0)
 struct UndirectedGraph : public Graph
 {
@@ -29,8 +29,7 @@ struct UndirectedGraph : public Graph
   {
   }
 
-  constexpr auto operator==(const UndirectedGraph& other) const
-      -> bool = default;
+  constexpr auto operator==(const UndirectedGraph& other) const -> bool = default;
 
   constexpr auto id() const -> uint64_t { return this->edge_bits(); }
 
