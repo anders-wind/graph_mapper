@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "graph_mapper/graphs/graph_base.hpp"
+#include "graph_mapper/graphs/graph_concepts.hpp"
 
 namespace wind::gm
 {
@@ -13,31 +14,60 @@ struct UndirectedGraph : public Graph
 {
   using self_t = UndirectedGraph<V>;
 
-  constexpr static auto vertices = V;
+  constexpr static auto num_vertices = V;
   constexpr static auto max_edges = V == 1 ? 0 : ((V * (V - 1)) / 2);
   constexpr static auto number_of_graphs = 1ULL << self_t::max_edges;
   constexpr static auto is_undirected = true;
+  constexpr static auto vertices = []() consteval -> std::array<uint32_t, self_t::num_vertices>
+  {
+    auto res = std::array<uint32_t, self_t::num_vertices> {};
+    for (auto i = 0UL; i < self_t::num_vertices; i++) {
+      res[i] = i;
+    }
+    return res;
+  }();
+  constexpr static auto all_vertex_pairs = []() consteval -> std::array<edge, self_t::max_edges>
+  {
+    if constexpr (V == 1) {
+      return {};
+    } else {
+      auto res = std::array<edge, self_t::max_edges> {};
+      for (auto i = 0UL; i < self_t::num_vertices; i++) {
+        for (auto j = i + 1; j < self_t::num_vertices; j++) {
+          res[j * (j - 1UL) / 2UL + i] = {i, j};
+        }
+      }
+      return res;
+    }
+  }();
 
-  std::bitset<self_t::max_edges> edges;
+  std::bitset<self_t::max_edges> edge_bits;
 
   /**
    * edge_combination_bit is the number describing the bits that represent the
    * activated edges.
    */
   UndirectedGraph(uint64_t edge_combination_bit)
-      : edges(std::bitset<self_t::max_edges>(edge_combination_bit))
+      : edge_bits(std::bitset<self_t::max_edges>(edge_combination_bit))
   {
   }
 
   constexpr auto operator==(const UndirectedGraph& other) const -> bool = default;
 
-  constexpr auto id() const -> uint64_t { return this->edge_bits(); }
+  constexpr auto id() const -> uint64_t
+  {
+    if constexpr (V == 1) {
+      return 0;
+    } else {
+      return this->edge_bits.to_ullong();
+    }
+  }
 
   constexpr auto index(uint32_t v1, uint32_t v2) const -> size_t
   {
     auto vlow = std::min(v1, v2);
     auto vhigh = std::max(v1, v2);
-    return vhigh * (vhigh - 1ULL) / 2ULL + vlow;
+    return vhigh * (vhigh - 1UL) / 2UL + vlow;
   }
 
   constexpr void set_edge(uint32_t v1, uint32_t v2, bool val = true)
@@ -45,7 +75,7 @@ struct UndirectedGraph : public Graph
     if (v1 == v2) {
       return;
     }
-    this->edges.set(this->index(v1, v2), val);
+    this->edge_bits.set(this->index(v1, v2), val);
   }
 
   constexpr auto has_edge(uint32_t v1, uint32_t v2) const -> bool
@@ -53,16 +83,24 @@ struct UndirectedGraph : public Graph
     if (v1 == v2) {
       return false;
     }
-    return this->edges[this->index(v1, v2)];
+    return this->edge_bits[this->index(v1, v2)];
   }
 
-  constexpr auto edge_bits() const -> uint64_t
+  constexpr auto connected_to(uint32_t from) const -> std::ranges::view auto
   {
-    if constexpr (V == 1) {
-      return 0;
-    } else {
-      return this->edges.to_ullong();
-    }
+    return self_t::vertices
+        | std::views::filter([this, from](auto to) { return from != to && this->has_edge(from, to); });
+  }
+
+  constexpr auto edges() const -> std::ranges::view auto
+  {
+    return all_vertex_pairs
+        | std::views::filter(
+               [this](auto p)
+               {
+                 auto [v1, v2] = p;
+                 return v1 < v2 && this->has_edge(v1, v2);
+               });
   }
 };
 

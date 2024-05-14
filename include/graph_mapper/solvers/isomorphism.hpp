@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <optional>
@@ -21,7 +22,7 @@ constexpr auto swap(const GraphT& g, uint32_t v1, uint32_t v2) -> GraphT
     return res;
   }
 
-  for (auto i = 0UL; i < GraphT::vertices; i++) {
+  for (auto i = 0UL; i < GraphT::num_vertices; i++) {
     res.set_edge(i, v2, g.has_edge(i, v1));
     res.set_edge(i, v1, g.has_edge(i, v2));
   }
@@ -36,12 +37,12 @@ constexpr auto swap(const GraphT& g, uint32_t v1, uint32_t v2) -> GraphT
 template<is_graph GraphT>
 constexpr auto base_form(const GraphT& base, uint32_t current_index = 0) -> GraphT
 {
-  if (current_index == GraphT::vertices) {
+  if (current_index == GraphT::num_vertices) {
     return base;
   }
 
   auto lowest_id_graph = base_form(base, current_index + 1);
-  for (auto i = current_index + 1; i < GraphT::vertices; i++) {
+  for (auto i = current_index + 1; i < GraphT::num_vertices; i++) {
     auto swapped = base_form(swap(base, current_index, i), current_index + 1);
     if (swapped.id() < lowest_id_graph.id()) {
       lowest_id_graph = swapped;
@@ -56,7 +57,7 @@ constexpr auto get_all_graphs_with_same_id(const GraphT& base,
                                            uint32_t current_index,
                                            std::unordered_set<uint64_t>& out) -> void
 {
-  if (current_index == GraphT::vertices) {
+  if (current_index == GraphT::num_vertices) {
     out.emplace(base.id());
     return;
   }
@@ -64,7 +65,7 @@ constexpr auto get_all_graphs_with_same_id(const GraphT& base,
   if (!out.contains(base.id())) {
     get_all_graphs_with_same_id(base, current_index + 1, out);
 
-    for (auto i = current_index + 1; i < GraphT::vertices; i++) {
+    for (auto i = current_index + 1; i < GraphT::num_vertices; i++) {
       get_all_graphs_with_same_id(swap(base, current_index, i), current_index + 1, out);
     }
   }
@@ -105,6 +106,22 @@ auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
   auto transformed = cache | std::views::filter([](const auto& g) { return g.has_value(); })
       | std::views::transform([](const auto& g) { return g.value(); });
   return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
+}
+
+template<is_graph GraphT>
+auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
+{
+  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const GraphT&) { return true; }));
+  std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
+  return res;
+}
+
+template<is_graph GraphT>
+auto get_all_none_isomorphic_connected_graphs() -> std::vector<GraphT>
+{
+  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const GraphT& graph) { return graph.is_connected(); }));
+  std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
+  return res;
 }
 
 }  // namespace wind::gm

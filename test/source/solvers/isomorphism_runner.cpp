@@ -1,45 +1,50 @@
-#include <fstream>
 #include <ranges>
-#include <sstream>
 
 #include "graph_mapper/solvers/isomorphism.hpp"
 
 #include <doctest/doctest.h>
 
-#include "../test_helpers.h"
+#include "graph_mapper/dataset/writer.hpp"
 #include "graph_mapper/graphs/undirected_graph.hpp"
 
 namespace wind::gm
 {
+template<uint32_t V>
+struct integer
+{
+  constexpr static auto v = V;
+};
 
 TEST_SUITE("isomorphism")
 {
-  TEST_CASE("dump all base forms" * doctest::skip(true))
+  TEST_CASE_TEMPLATE("dump all base forms" * doctest::skip(true),
+                     V,
+                     integer<1>,
+                     integer<2>,
+                     integer<3>,
+                     integer<4>,
+                     integer<5>,
+                     integer<6>,
+                     integer<7>,
+                     integer<8>)
   {
-    auto graphs = unique_graphs(get_all_base_forms_v2<UGraph<8>>(all_ok));
-    std::ranges::sort(graphs, [](const auto& a, const auto& b) { return a.id() < b.id(); });
-
-    auto ss = std::stringstream();
-    ss << "id\n";
-    for (const auto& g : graphs) {
-      ss << g.id() << "\n";
-    }
-    auto fs = std::ofstream("none_isomorphic_undirected_graphs_of_up_to_size_8.csv");
-    fs << ss.str();
+    auto graphs = get_all_none_isomorphic_graphs<UGraph<V::v>>();
+    write_ids_to_csv(graphs, std::format("none_isomorphic_undirected_graphs_of_up_to_size_{}.csv", V::v));
   }
 
-  TEST_CASE("dump all base forms of connected_graphs" * doctest::skip(true))
+  TEST_CASE_TEMPLATE("dump all base forms of connected_graphs" * doctest::skip(true),
+                     V,
+                     integer<1>,
+                     integer<2>,
+                     integer<3>,
+                     integer<4>,
+                     integer<5>,
+                     integer<6>,
+                     integer<7>,
+                     integer<8>)
   {
-    auto graphs = unique_graphs(get_all_base_forms_v2<UGraph<8>>([](auto g) { return g.is_connected(); }));
-    std::ranges::sort(graphs, [](const auto& a, const auto& b) { return a.id() < b.id(); });
-
-    auto ss = std::stringstream();
-    ss << "id\n";
-    for (const auto& g : graphs) {
-      ss << g.id() << "\n";
-    }
-    auto fs = std::ofstream("none_isomorphic_connected_undirected_graphs_of_up_to_size_8.csv");
-    fs << ss.str();
+    auto graphs = get_all_none_isomorphic_connected_graphs<UGraph<V::v>>();
+    write_ids_to_csv(graphs, std::format("none_isomorphic_connected_undirected_graphs_of_up_to_size_{}.csv", V::v));
   }
 }
 

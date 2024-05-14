@@ -2,7 +2,6 @@
 
 #include <doctest/doctest.h>
 
-#include "../test_helpers.h"
 #include "graph_mapper/graphs/undirected_graph.hpp"
 
 namespace wind::gm
@@ -28,106 +27,93 @@ TEST_SUITE("isomorphism::base_id")
 
   TEST_CASE("number of none-isomorphic graphs")
   {
-    auto checker = []<int32_t V>()
-    {
-      auto graphs = get_all_base_forms_v2<UGraph<V>>(all_ok);
-      REQUIRE_EQ(graphs.size(), UGraph<V>::number_of_graphs);
-      return unique_graphs(graphs).size();
-    };
-
     // https://cw.fel.cvut.cz/b201/_media/courses/b4m33pal/lectures/isomorphism_notes.pdf
     // https://oeis.org/A000088
     SUBCASE("V=1")
     {
-      CHECK_EQ(checker.operator()<1>(), 1);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<1>>().size(), 1);
     }
     SUBCASE("V=2")
     {
-      CHECK_EQ(checker.operator()<2>(), 2);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<2>>().size(), 2);
     }
     SUBCASE("V=3")
     {
-      CHECK_EQ(checker.operator()<3>(), 4);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<3>>().size(), 4);
     }
     SUBCASE("V=4")
     {
-      CHECK_EQ(checker.operator()<4>(), 11);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<4>>().size(), 11);
     }
     SUBCASE("V=5")
     {
-      CHECK_EQ(checker.operator()<5>(), 34);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<5>>().size(), 34);
     }
     SUBCASE("V=6")
     {
-      CHECK_EQ(checker.operator()<6>(), 156);
+      CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<6>>().size(), 156);
     }
     // SUBCASE("V=7")  // fast with Release
     // {
-    //   CHECK_EQ(checker.operator()<7>(), 1044ULL);
+    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<7>>().size(), 1044ULL);
     // }
     // SUBCASE("V=8")  // possible with Release
     // {
-    //   CHECK_EQ(checker.operator()<8>(), 12346ULL);
+    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<8>>().size(), 12346ULL);
     // }
     // SUBCASE("V=9")
     // {
-    //   CHECK_EQ(checker.operator()<9>(), 274668ULL);  // 268KB
+    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<9>>().size(), 274668ULL);  // 268KB
     // }
     // SUBCASE("V=10")
     // {
-    //   CHECK_EQ(checker.operator()<10>(), 12005168ULL); // 11MB
+    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<1>.size()0>(), 12005168ULL); // 11MB
     // }
   }
 
   TEST_CASE("number of none-isomorphic connected graphs")
   {
-    auto checker = []<int32_t V>()
-    {
-      auto graphs = unique_graphs(get_all_base_forms_v2<UGraph<V>>([](auto g) { return g.is_connected(); }));
-      return graphs.size();
-    };
-
     // https://cw.fel.cvut.cz/b201/_media/courses/b4m33pal/lectures/isomorphism_notes.pdf
     // https://oeis.org/A001349
     SUBCASE("V=1")
     {
-      CHECK_EQ(checker.operator()<1>(), 1);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<1>>().size(), 1);
     }
     SUBCASE("V=2")
     {
-      CHECK_EQ(checker.operator()<2>(), 1);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<2>>().size(), 1);
     }
     SUBCASE("V=3")
     {
-      CHECK_EQ(checker.operator()<3>(), 2);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<3>>().size(), 2);
     }
     SUBCASE("V=4")
     {
-      CHECK_EQ(checker.operator()<4>(), 6);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<4>>().size(), 6);
     }
     SUBCASE("V=5")
     {
-      CHECK_EQ(checker.operator()<5>(), 21);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<5>>().size(), 21);
     }
     SUBCASE("V=6")
     {
-      CHECK_EQ(checker.operator()<6>(), 112);
+      CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<6>>().size(), 112);
     }
     // SUBCASE("V=7")  // fast with Release
     // {
-    //   CHECK_EQ(checker.operator()<7>(), 853);
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<7>().size(), 853);
     // }
     // SUBCASE("V=8") // possible with Release
     // {
-    //   CHECK_EQ(checker.operator()<8>(), 11117);
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<8>().size(), 11117);
     // }
     // SUBCASE("V=9")
     // {
-    //   CHECK_EQ(checker.operator()<9>(), 261080ULL); // 254KB
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<9>().size(), 261080ULL); // 254KB
     // }
     // SUBCASE("V=10")
     // {
-    //   CHECK_EQ(checker.operator()<10>(), 11716571ULL); // 11MB
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<10>().size(), 11716571ULL); // 11MB
     // }
   }
 
