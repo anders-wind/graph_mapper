@@ -24,7 +24,7 @@ TEST_SUITE("graph_generator")
     CHECK_EQ(g.is_connected(), true);
   }
 
-  TEST_CASE("print all graphs of size 3")
+  TEST_CASE("print all graphs of size 3" * doctest::skip())
   {
     for (const auto& g : generate_graphs<UGraph<3>>()) {
       std::cout << g.to_dot() << std::endl;

@@ -2,6 +2,7 @@
 
 #include <doctest/doctest.h>
 
+#include "graph_mapper/graphs/graph_generator.hpp"
 #include "graph_mapper/graphs/undirected_graph.hpp"
 
 namespace wind::gm

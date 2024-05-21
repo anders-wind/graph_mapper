@@ -86,10 +86,17 @@ struct UndirectedGraph : public Graph
     return this->edge_bits[this->index(v1, v2)];
   }
 
+  constexpr auto num_edges() const -> uint32_t { return static_cast<uint32_t>(this->edge_bits.count()); }
+
+  constexpr auto degree(uint32_t v) const -> uint32_t
+  {
+    return static_cast<uint32_t>(
+        std::ranges::count_if(self_t::vertices, [this, v](auto i) { return this->has_edge(v, i); }));
+  }
+
   constexpr auto connected_to(uint32_t from) const -> std::ranges::view auto
   {
-    return self_t::vertices
-        | std::views::filter([this, from](auto to) { return from != to && this->has_edge(from, to); });
+    return self_t::vertices | std::views::filter([this, from](auto to) { return this->has_edge(from, to); });
   }
 
   constexpr auto edges() const -> std::ranges::view auto
