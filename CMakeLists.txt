@@ -44,7 +44,7 @@ target_include_directories(graph_mapper_graph_mapper ${warning_guard} PUBLIC "\$
 
 target_include_directories(graph_mapper_graph_mapper SYSTEM PUBLIC "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>")
 
-target_compile_features(graph_mapper_graph_mapper PUBLIC cxx_std_23)
+target_compile_options(graph_mapper_graph_mapper PRIVATE -std=c++2b)
 
 find_package(fmt REQUIRED)
 target_link_libraries(graph_mapper_graph_mapper PRIVATE fmt::fmt)

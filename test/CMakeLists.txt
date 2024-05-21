@@ -27,7 +27,7 @@ add_executable(
 )
 
 target_link_libraries(graph_mapper_test PRIVATE graph_mapper::graph_mapper doctest::doctest)
-target_compile_features(graph_mapper_test PRIVATE cxx_std_23)
+target_compile_options(graph_mapper_test PRIVATE -std=c++2b)
 target_compile_definitions(graph_mapper_test PRIVATE GM_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data")
 add_test(NAME graph_mapper_test COMMAND graph_mapper_test)
 

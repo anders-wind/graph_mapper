@@ -17,31 +17,33 @@ struct integer
 
 TEST_SUITE("isomorphism")
 {
-  TEST_CASE_TEMPLATE("dump all base forms" * doctest::skip(true),
+  TEST_CASE_TEMPLATE("dump all base forms",
                      V,
-                     integer<1>,
-                     integer<2>,
-                     integer<3>,
-                     integer<4>,
-                     integer<5>,
-                     integer<6>,
-                     integer<7>,
-                     integer<8>)
+                     //  integer<1>,
+                     //  integer<2>,
+                     //  integer<3>,
+                     //  integer<4>,
+                     //  integer<5>,
+                     //  integer<6>,
+                     //  integer<7>,
+                     //  integer<8>,
+                     integer<9>)
   {
     auto graphs = get_all_none_isomorphic_graphs<UGraph<V::v>>();
     write_ids_to_csv(graphs, std::format("none_isomorphic_undirected_graphs_of_up_to_size_{}.csv", V::v));
   }
 
-  TEST_CASE_TEMPLATE("dump all base forms of connected_graphs" * doctest::skip(true),
+  TEST_CASE_TEMPLATE("dump all base forms of connected_graphs",
                      V,
-                     integer<1>,
-                     integer<2>,
-                     integer<3>,
-                     integer<4>,
-                     integer<5>,
-                     integer<6>,
-                     integer<7>,
-                     integer<8>)
+                     //  integer<1>,
+                     //  integer<2>,
+                     //  integer<3>,
+                     //  integer<4>,
+                     //  integer<5>,
+                     //  integer<6>,
+                     //  integer<7>,
+                     //  integer<8>,
+                     integer<9>)
   {
     auto graphs = get_all_none_isomorphic_connected_graphs<UGraph<V::v>>();
     write_ids_to_csv(graphs, std::format("none_isomorphic_connected_undirected_graphs_of_up_to_size_{}.csv", V::v));

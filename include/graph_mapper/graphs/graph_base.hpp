@@ -90,9 +90,10 @@ auto operator<<(std::ostream& os, const GraphT& g) -> std::ostream&
 template<typename GraphT>
 constexpr auto unique_graphs(const std::vector<GraphT>& graphs) -> std::vector<GraphT>
 {
-  auto unique_ids =
-      graphs | std::views::transform([](auto g) { return g.id(); }) | std::ranges::to<std::unordered_set>();
-  return unique_ids | std::views::transform([](auto id) { return GraphT(id); }) | std::ranges::to<std::vector>();
+  auto ids = graphs | std::views::transform([](auto g) { return g.id(); });
+  auto unique_ids = std::unordered_set<uint64_t>(std::begin(ids), std::end(ids));
+  auto rng = unique_ids | std::views::transform([](auto id) { return GraphT(id); });
+  return std::vector<GraphT>(std::begin(rng), std::end(rng));
 }
 
 }  // namespace wind::gm

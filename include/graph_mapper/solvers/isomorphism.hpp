@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <iostream>
 #include <optional>
 #include <span>
 #include <unordered_set>
@@ -90,7 +91,9 @@ auto get_base_form_of_group(std::span<const GraphT> group) -> GraphT
 template<typename GraphT>
 auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
 {
+  std::cout << GraphT::number_of_graphs << std::endl;
   auto cache = std::vector<std::optional<GraphT>>(GraphT::number_of_graphs);
+  std::cout << cache.size() << " " << cache.capacity() << std::endl;
   for (const auto& g : generate_graphs<GraphT>() | std::views::filter(filter)) {
     if (cache[g.id()]) {
       continue;

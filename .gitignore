@@ -1,11 +1,12 @@
-**/.DS_Store
+.cache
+.clangd
 .idea/
 .vs/
 .vscode/
+**/.DS_Store
 build/
 cmake-build-*/
-prefix/
-.clangd
 CMakeLists.txt.user
 CMakeUserPresets.json
 compile_commands.json
+prefix/

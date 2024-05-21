@@ -16,6 +16,8 @@ static_assert(UGraph<9>::number_of_graphs == 1ULL << 36);  // 2^36/1024/1024/102
 static_assert(UGraph<10>::number_of_graphs == 1ULL << 45);  // 2^45/1024/1024/1024/1024 = 32 TB
 static_assert(UGraph<11>::number_of_graphs == 1ULL << 55);  // max, the next is at 66
 
+static_assert(sizeof(UGraph<9>) == 8);
+
 TEST_SUITE("has_edge")
 {
   TEST_CASE("Empty graph")

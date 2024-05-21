@@ -14,14 +14,14 @@ struct UndirectedGraph : public Graph
 {
   using self_t = UndirectedGraph<V>;
 
-  constexpr static auto num_vertices = V;
-  constexpr static auto max_edges = V == 1 ? 0 : ((V * (V - 1)) / 2);
-  constexpr static auto number_of_graphs = 1ULL << self_t::max_edges;
-  constexpr static auto is_undirected = true;
-  constexpr static auto vertices = []() consteval -> std::array<uint32_t, self_t::num_vertices>
+  constexpr static uint32_t num_vertices = V;
+  constexpr static uint32_t max_edges = V == 1 ? 0 : ((V * (V - 1)) / 2);
+  constexpr static size_t number_of_graphs = 1ULL << self_t::max_edges;
+  constexpr static bool is_undirected = true;
+  constexpr static auto vertices = []() consteval -> std::array<uint32_t, num_vertices>
   {
-    auto res = std::array<uint32_t, self_t::num_vertices> {};
-    for (auto i = 0UL; i < self_t::num_vertices; i++) {
+    auto res = std::array<uint32_t, num_vertices> {};
+    for (auto i = uint32_t(0); i < num_vertices; i++) {
       res[i] = i;
     }
     return res;
@@ -32,8 +32,8 @@ struct UndirectedGraph : public Graph
       return {};
     } else {
       auto res = std::array<edge, self_t::max_edges> {};
-      for (auto i = 0UL; i < self_t::num_vertices; i++) {
-        for (auto j = i + 1; j < self_t::num_vertices; j++) {
+      for (auto i = uint32_t(0); i < num_vertices; i++) {
+        for (auto j = i + 1; j < num_vertices; j++) {
           res[j * (j - 1UL) / 2UL + i] = {i, j};
         }
       }
