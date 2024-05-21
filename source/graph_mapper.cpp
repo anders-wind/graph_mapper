@@ -1,11 +1,10 @@
+#include <format>
 #include <string>
 
 #include "graph_mapper/graph_mapper.hpp"
 
-#include <fmt/core.h>
-
 exported_class::exported_class()
-    : m_name {fmt::format("{}", "graph_mapper")}
+    : m_name {std::format("{}", "graph_mapper")}
 {
 }
 

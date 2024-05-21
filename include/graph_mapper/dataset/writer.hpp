@@ -4,11 +4,10 @@
 #include <sstream>
 #include <string_view>
 
+#include "graph_mapper/dataset/constants.hpp"
+
 namespace wind::gm
 {
-#if defined(GM_DATA_DIR)
-static const auto dataset_dir = std::filesystem::path {GM_DATA_DIR};
-#endif
 
 template<is_graph GraphT>
 auto write_ids_to_csv(const std::vector<GraphT>& graphs, std::string_view file_name) -> void

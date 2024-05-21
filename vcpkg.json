@@ -1,7 +1,7 @@
 {
   "name": "graph-mapper",
   "version-semver": "0.1.0",
-  "dependencies": ["fmt"],
+  "dependencies": ["tl-generator"],
   "default-features": [],
   "features": {
     "test": {

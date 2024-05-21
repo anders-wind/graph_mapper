@@ -13,6 +13,9 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
+# ---- Find Dependencies ----
+find_path(TL_GENERATOR_INCLUDE_DIRS "tl/generator.hpp")
+
 # ---- Declare library ----
 
 add_library(graph_mapper_graph_mapper source/graph_mapper.cpp)
@@ -42,12 +45,13 @@ set_target_properties(
 
 target_include_directories(graph_mapper_graph_mapper ${warning_guard} PUBLIC "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
 
-target_include_directories(graph_mapper_graph_mapper SYSTEM PUBLIC "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>")
+target_include_directories(
+    graph_mapper_graph_mapper SYSTEM
+    PUBLIC "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+    PRIVATE ${TL_GENERATOR_INCLUDE_DIRS}
+)
 
 target_compile_features(graph_mapper_graph_mapper PUBLIC cxx_std_23)
-
-find_package(fmt REQUIRED)
-target_link_libraries(graph_mapper_graph_mapper PRIVATE fmt::fmt)
 
 # ---- Install rules ----
 

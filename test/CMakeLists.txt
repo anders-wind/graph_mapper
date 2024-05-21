@@ -24,6 +24,7 @@ add_executable(
     source/main.cpp
     source/solvers/isomorphism_runner.cpp
     source/solvers/isomorphism_tests.cpp
+    source/solvers/minimum_vertex_cover_tests.cpp
 )
 
 target_link_libraries(graph_mapper_test PRIVATE graph_mapper::graph_mapper doctest::doctest)

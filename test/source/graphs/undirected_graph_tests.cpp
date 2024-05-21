@@ -4,6 +4,11 @@
 
 namespace wind::gm
 {
+template<auto V>
+struct value
+{
+};
+
 static_assert(is_graph<UGraph<5>>);
 static_assert(UGraph<1>::number_of_graphs == 1);
 static_assert(UGraph<2>::number_of_graphs == 2);
@@ -15,6 +20,18 @@ static_assert(UGraph<8>::number_of_graphs == 1ULL << 28);  // 2^28/1024/1024 = 2
 static_assert(UGraph<9>::number_of_graphs == 1ULL << 36);  // 2^36/1024/1024/1024 = 64 GB
 static_assert(UGraph<10>::number_of_graphs == 1ULL << 45);  // 2^45/1024/1024/1024/1024 = 32 TB
 static_assert(UGraph<11>::number_of_graphs == 1ULL << 55);  // max, the next is at 66
+
+static_assert(sizeof(UGraph<1>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<2>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<3>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<4>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<5>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<6>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<7>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<8>) == sizeof(uint32_t));
+static_assert(sizeof(UGraph<9>) == sizeof(uint64_t));
+static_assert(sizeof(UGraph<10>) == sizeof(uint64_t));
+static_assert(sizeof(UGraph<11>) == sizeof(uint64_t));
 
 TEST_SUITE("has_edge")
 {
