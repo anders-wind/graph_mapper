@@ -20,16 +20,6 @@ struct Graph
 public:
   constexpr auto operator==(const Graph& other) const -> bool = default;
 
-  constexpr auto get_vertices(this const auto& self) -> uint32_t
-  {
-    using type = std::remove_cvref_t<decltype(self)>;
-    return type::num_vertices;
-  }
-
-  constexpr auto set_edge(this const auto& self, uint32_t v1, uint32_t v2) -> bool { return self.set_edge(v1, v2); }
-
-  constexpr auto has_edge(this const auto& self, uint32_t v1, uint32_t v2) -> bool { return self.has_edge(v1, v2); }
-
   constexpr auto is_connected(this const auto& self) -> bool
   {
     using type = std::remove_cvref_t<decltype(self)>;
