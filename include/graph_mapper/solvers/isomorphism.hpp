@@ -98,7 +98,7 @@ auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
       continue;
     }
 
-    auto group = get_all_graphs_with_same_id(base_form(g));
+    auto group = get_all_graphs_with_same_id(g);
     auto base = get_base_form_of_group<GraphT>(group);
     for (const auto& g_inner : group) {
       cache[g_inner.id()] = base;
