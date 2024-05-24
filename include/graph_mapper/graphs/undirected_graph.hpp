@@ -86,6 +86,19 @@ struct UndirectedGraph : public Graph
     return this->edge_bits[this->index(v1, v2)];
   }
 
+  constexpr auto has_same_edges(uint32_t v1, uint32_t v2) const -> bool
+  {
+    if (v1 == v2) {
+      return true;
+    }
+    for (auto i = 0UL; i < self_t::num_vertices; i++) {
+      if (this->has_edge(v1, i) != this->has_edge(v2, i)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   constexpr auto num_edges() const -> uint32_t { return static_cast<uint32_t>(this->edge_bits.count()); }
 
   constexpr auto degree(uint32_t v) const -> uint32_t
@@ -122,12 +135,7 @@ struct UndirectedGraph : public Graph
   }
 
   using graph_with_one_less_vertex_t =
-      std::conditional_t<num_vertices == 1, UndirectedGraph<0>, UndirectedGraph<num_vertices - 1>>;
-};
-
-template<>
-struct UndirectedGraph<0>
-{
+      std::conditional_t<num_vertices <= 1, UndirectedGraph<0>, UndirectedGraph<num_vertices - 1>>;
 };
 
 template<int32_t V>

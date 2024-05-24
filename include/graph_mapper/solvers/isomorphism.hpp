@@ -145,6 +145,7 @@ template<is_graph GraphT>
 auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
 {
   auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto&) { return true; }));
+  // auto res = unique_graphs(get_all_base_forms_v3<GraphT, false>());
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }
@@ -153,6 +154,7 @@ template<is_graph GraphT>
 auto get_all_none_isomorphic_connected_graphs() -> std::vector<GraphT>
 {
   auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto& g) { return g.is_connected(); }));
+  // auto res = unique_graphs(get_all_base_forms_v3<GraphT, true>());
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }
