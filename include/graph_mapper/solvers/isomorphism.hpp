@@ -7,8 +7,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include "graph_mapper/graphs/graph_base.hpp"
 #include "graph_mapper/graphs/graph_concepts.hpp"
 #include "graph_mapper/graphs/graph_generator.hpp"
+#include "graph_mapper/solvers/permutations.hpp"
 
 namespace wind::gm
 {
@@ -108,10 +110,41 @@ auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
   return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
 }
 
+template<typename GraphT, bool ShouldBeConnected>
+auto get_all_base_forms_v3() -> std::vector<GraphT>
+{
+  if constexpr (GraphT::num_vertices == 1) {
+    return {GraphT(0)};
+  } else {
+    auto prev_level = get_all_base_forms_v3<typename GraphT::graph_with_one_less_vertex_t, ShouldBeConnected>();
+
+    auto new_level = std::vector<GraphT> {};
+    for (const auto& g : prev_level) {
+      auto g_with_extra_vertex = g.with_added_vertex();
+
+      for (auto to_connect_to : generate_all_permutations<GraphT::num_vertices - 1>()) {
+        if (to_connect_to.count() == 0) {
+          if constexpr (!ShouldBeConnected) {
+            new_level.emplace_back(base_form(g_with_extra_vertex));
+          }
+          continue;
+        }
+
+        auto g_with_edges_to_new_vertex = g_with_extra_vertex;
+        for (auto i = 0UL; i < GraphT::num_vertices - 1; i++) {
+          g_with_edges_to_new_vertex.set_edge(i, GraphT::num_vertices - 1, to_connect_to[i]);
+        }
+        new_level.emplace_back(base_form(g_with_edges_to_new_vertex));
+      }
+    }
+    return unique_graphs(new_level);
+  }
+}
+
 template<is_graph GraphT>
 auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
 {
-  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const GraphT&) { return true; }));
+  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto&) { return true; }));
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }
@@ -119,7 +152,7 @@ auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
 template<is_graph GraphT>
 auto get_all_none_isomorphic_connected_graphs() -> std::vector<GraphT>
 {
-  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const GraphT& graph) { return graph.is_connected(); }));
+  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto& g) { return g.is_connected(); }));
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }

@@ -9,7 +9,7 @@ namespace wind::gm
 {
 
 template<uint32_t V>
-  requires(V > 0)
+  requires(V >= 0)
 struct UndirectedGraph : public Graph
 {
   using self_t = UndirectedGraph<V>;
@@ -109,6 +109,25 @@ struct UndirectedGraph : public Graph
                  return v1 < v2 && this->has_edge(v1, v2);
                });
   }
+
+  constexpr auto with_added_vertex() const -> UndirectedGraph<V + 1>
+  {
+    auto res = UGraph<V + 1>(0);
+    for (auto i = 0UL; i < V; i++) {
+      for (auto j = i + 1; j < V; j++) {
+        res.set_edge(i, j, this->has_edge(i, j));
+      }
+    }
+    return res;
+  }
+
+  using graph_with_one_less_vertex_t =
+      std::conditional_t<num_vertices == 1, UndirectedGraph<0>, UndirectedGraph<num_vertices - 1>>;
+};
+
+template<>
+struct UndirectedGraph<0>
+{
 };
 
 template<int32_t V>

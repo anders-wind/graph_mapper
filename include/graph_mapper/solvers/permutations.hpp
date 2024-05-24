@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <bitset>
 
 #include <tl/generator.hpp>
@@ -24,6 +25,7 @@ auto generate_all_permutations_with_n_active_bits(std::bitset<N> base, size_t st
   for (auto solution : generate_all_permutations_with_n_active_bits<N>(base, start_from + 1, k)) {
     co_yield solution;
   }
+
   base.set(start_from);
   for (auto solution : generate_all_permutations_with_n_active_bits<N>(base, start_from + 1, k - 1)) {
     co_yield solution;
@@ -33,9 +35,31 @@ auto generate_all_permutations_with_n_active_bits(std::bitset<N> base, size_t st
 template<uint64_t N>
 auto generate_all_permutations_with_n_active_bits(size_t k) -> tl::generator<std::bitset<N>>
 {
-  for (auto solution : generate_all_permutations_with_n_active_bits(std::bitset<N>(), 0, k)) {
+  return generate_all_permutations_with_n_active_bits(std::bitset<N>(), 0, k);
+}
+
+template<uint64_t N>
+auto generate_all_permutations(std::bitset<N> base, size_t start_from) -> tl::generator<std::bitset<N>>
+{
+  if (start_from >= N) {
+    co_yield base;
+    co_return;
+  }
+
+  for (auto solution : generate_all_permutations<N>(base, start_from + 1)) {
     co_yield solution;
   }
+
+  base.set(start_from);
+  for (auto solution : generate_all_permutations<N>(base, start_from + 1)) {
+    co_yield solution;
+  }
+}
+
+template<uint64_t N>
+auto generate_all_permutations() -> tl::generator<std::bitset<N>>
+{
+  return generate_all_permutations(std::bitset<N>(), 0);
 }
 
 }  // namespace wind::gm

@@ -67,7 +67,7 @@ TEST_SUITE("isomorphism::base_id")
     // }
     // SUBCASE("V=10")
     // {
-    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<1>.size()0>(), 12005168ULL); // 11MB
+    //   CHECK_EQ(get_all_none_isomorphic_graphs<UGraph<10>>().size(), 12005168ULL); // 11MB
     // }
   }
 
@@ -101,19 +101,19 @@ TEST_SUITE("isomorphism::base_id")
     }
     // SUBCASE("V=7")  // fast with Release
     // {
-    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<7>().size(), 853);
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<7>>().size(), 853);
     // }
     // SUBCASE("V=8") // possible with Release
     // {
-    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<8>().size(), 11117);
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<8>>().size(), 11117);
     // }
     // SUBCASE("V=9")
     // {
-    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<9>().size(), 261080ULL); // 254KB
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<9>>().size(), 261080ULL); // 254KB
     // }
     // SUBCASE("V=10")
     // {
-    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<10>().size(), 11716571ULL); // 11MB
+    //   CHECK_EQ(get_all_none_isomorphic_connected_graphs<UGraph<10>>().size(), 11716571ULL); // 11MB
     // }
   }
 
