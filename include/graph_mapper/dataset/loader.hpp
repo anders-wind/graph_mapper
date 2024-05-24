@@ -14,7 +14,7 @@ struct RawDataset
   std::vector<std::vector<std::string>> data;
 };
 
-auto load_csv(const std::filesystem::path& file_name) -> RawDataset
+inline auto load_csv(const std::filesystem::path& file_name) -> RawDataset
 {
   auto fs = std::ifstream(file_name);
   auto dataset = RawDataset();

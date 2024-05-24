@@ -33,8 +33,6 @@ auto is_vertex_cover(const GraphT& graph, std::bitset<GraphT::num_vertices> solu
 template<is_graph GraphT>
 auto minimum_vertex_cover_size(const GraphT& graph) -> uint32_t
 {
-  //   auto minimum_size = std::min(0LL, staticGraphT::num_vertices - graph.edge_bits.count());
-
   for (auto i = 0UL; i < GraphT::num_vertices; i++) {
     for (auto solution : generate_all_permutations_with_n_active_bits<GraphT::num_vertices>(i)) {
       if (is_vertex_cover(graph, solution)) {
@@ -67,11 +65,11 @@ struct MinimumVertexCoverSolution
   size_t minimum_size;
   size_t number_of_solutions;
 
+  static auto csv_header() -> std::string_view { return "id,minimum_size,number_of_solutions\n"; }
   auto to_csv_row() const -> std::string
   {
     return std::format("{},{},{}\n", g.id(), minimum_size, number_of_solutions);
   }
-  static auto csv_header() -> std::string_view { return "id,minimum_size,number_of_solutions\n"; }
 };
 
 template<is_graph GraphT>
