@@ -1,6 +1,9 @@
 #pragma once
+#include <fstream>
+#include <vector>
 
 #include "graph_mapper/dataset/constants.hpp"
+#include "graph_mapper/graphs/undirected_graph.hpp"
 
 namespace wind::gm
 {
@@ -67,7 +70,7 @@ auto load_none_isomorphic_undirected_graphs_of_up_to_size_n() -> std::vector<UGr
 }
 
 template<uint32_t V>
-auto none_isomorphic_connected_undirected_graphs_of_up_to_size_n() -> std::vector<UGraph<V>>
+auto load_none_isomorphic_connected_undirected_graphs_of_up_to_size_n() -> std::vector<UGraph<V>>
 {
   return load_graph_list<V>(std::format("none_isomorphic_connected_undirected_graphs_of_up_to_size_{}.csv", V));
 }

@@ -9,11 +9,15 @@
 
 namespace wind::gm
 {
+namespace
+{
+
 template<uint32_t V>
 struct integer
 {
   constexpr static auto v = V;
 };
+}  // namespace
 
 TEST_SUITE("isomorphism")
 {
