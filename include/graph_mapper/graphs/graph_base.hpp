@@ -49,16 +49,16 @@ public:
 
     auto edges = self.edges()
         | std::views::transform([](auto edge) { return std::format("  {} -- {};\n", edge.v1, edge.v2); })
-        | std::views::join | std::views::common;
+        | std::views::join;
     return std::format(
         "graph G{} {{\n"
         "  rankdir=LR;\n"
         "  node [shape=circle];\n"
         "  edge [dir=none];\n"
-        "  {}\n"
+        "{}\n"
         "}}",
         self.id(),
-        std::string {std::begin(edges), std::end(edges)});
+        edges | std::ranges::to<std::string>());
   }
 };
 

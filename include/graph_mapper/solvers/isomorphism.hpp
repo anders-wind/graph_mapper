@@ -78,8 +78,7 @@ auto get_all_graphs_with_same_id(const GraphT& base) -> std::vector<GraphT>
 {
   auto out = std::unordered_set<uint64_t> {};
   get_all_graphs_with_same_id(base, 0, out);
-  auto transformed = out | std::views::transform([](auto id) { return GraphT(id); });
-  return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
+  return out | std::views::transform([](auto id) { return GraphT(id); }) | std::ranges::to<std::vector>();
 }
 
 // Assumes all graphs in the group have the same base form. IE found with get_all_graphs_with_same_id
@@ -105,9 +104,8 @@ auto get_all_base_forms_v2(auto filter) -> std::vector<GraphT>
     }
   }
 
-  auto transformed = cache | std::views::filter([](const auto& g) { return g.has_value(); })
-      | std::views::transform([](const auto& g) { return g.value(); });
-  return std::vector<GraphT> {std::begin(transformed), std::end(transformed)};
+  return cache | std::views::filter([](const auto& g) { return g.has_value(); })
+      | std::views::transform([](const auto& g) { return g.value(); }) | std::ranges::to<std::vector>();
 }
 
 template<typename GraphT, bool ShouldBeConnected>

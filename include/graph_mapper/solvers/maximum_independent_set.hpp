@@ -54,15 +54,9 @@ template<is_graph GraphT>
 auto maximum_independent_set(const GraphT& graph) -> std::vector<std::bitset<GraphT::num_vertices>>
 {
   auto solution_size = maximum_independent_set_size(graph);
-
-  auto solutions = std::vector<std::bitset<GraphT::num_vertices>> {};
-  for (auto solution : generate_all_permutations_with_n_active_bits<GraphT::num_vertices>(solution_size)) {
-    if (is_independent_set(graph, solution)) {
-      solutions.emplace_back(solution);
-    }
-  }
-
-  return solutions;
+  return generate_all_permutations_with_n_active_bits<GraphT::num_vertices>(solution_size)
+      | std::views::filter([&graph](auto solution) { return is_independent_set(graph, solution); })
+      | std::ranges::to<std::vector>();
 }
 
 template<is_graph GraphT>
@@ -83,15 +77,14 @@ template<is_graph GraphT>
 auto solve_all_maximum_independent_set(const std::vector<GraphT>& graphs)
     -> std::vector<MaximumIndependentSetSolution<GraphT>>
 {
-  auto solutions_rng =
-      graphs
+  return graphs
       | std::views::transform(
-          [](const auto& g)
-          {
-            auto solutions = maximum_independent_set(g);
-            return MaximumIndependentSetSolution<GraphT> {g, solutions.at(0).count(), solutions.size()};
-          });
-  return std::vector<MaximumIndependentSetSolution<GraphT>> {std::begin(solutions_rng), std::end(solutions_rng)};
+             [](const auto& g)
+             {
+               auto solutions = maximum_independent_set(g);
+               return MaximumIndependentSetSolution<GraphT> {g, solutions.at(0).count(), solutions.size()};
+             })
+      | std::ranges::to<std::vector>();
 }
 
 }  // namespace wind::gm

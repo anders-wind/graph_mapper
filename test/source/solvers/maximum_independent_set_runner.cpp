@@ -23,7 +23,7 @@ struct integer
 
 TEST_SUITE("maximum_independent_set")
 {
-  TEST_CASE_TEMPLATE("dump all maximum_independent_set dataset" * doctest::skip(false),
+  TEST_CASE_TEMPLATE("dump all maximum_independent_set dataset" * doctest::skip(true),
                      V,
                      integer<1>,
                      integer<2>,
