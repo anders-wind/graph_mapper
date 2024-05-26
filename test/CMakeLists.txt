@@ -13,6 +13,7 @@ if (PROJECT_IS_TOP_LEVEL)
 endif ()
 
 find_package(doctest CONFIG REQUIRED)
+find_package(benchmark CONFIG REQUIRED)
 
 # ---- Tests ----
 
@@ -34,6 +35,14 @@ target_link_libraries(graph_mapper_test PRIVATE graph_mapper::graph_mapper docte
 target_compile_features(graph_mapper_test PRIVATE cxx_std_23)
 target_compile_definitions(graph_mapper_test PRIVATE GM_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../data")
 add_test(NAME graph_mapper_test COMMAND graph_mapper_test)
+
+# benhcmark
+
+add_executable(graph_mapper_benchmark bench.cpp)
+
+target_link_libraries(graph_mapper_benchmark PRIVATE graph_mapper::graph_mapper benchmark::benchmark)
+target_compile_features(graph_mapper_benchmark PRIVATE cxx_std_23)
+add_test(NAME graph_mapper_benchmark COMMAND graph_mapper_benchmark)
 
 # ---- End-of-file commands ----
 
