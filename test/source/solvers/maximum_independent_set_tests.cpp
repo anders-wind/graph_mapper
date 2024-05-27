@@ -40,7 +40,7 @@ TEST_SUITE("maximum_independent_set::maximum_independent_set")
     {
       auto g = UGraph<2>(UGraph<2>::number_of_graphs - 1ULL);
       auto solutions = maximum_independent_set(g);
-      CHECK_EQ(solutions.size(), 1);
+      CHECK_EQ(solutions.size(), 2);
       for (auto& solution : solutions) {
         CHECK_EQ(solution.count(), 1);
       }

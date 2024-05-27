@@ -1,5 +1,7 @@
 #pragma once
+#include <format>
 #include <fstream>
+#include <stacktrace>
 #include <vector>
 
 #include "graph_mapper/dataset/constants.hpp"
@@ -20,7 +22,7 @@ inline auto load_csv(const std::filesystem::path& file_name) -> RawDataset
   auto dataset = RawDataset();
 
   if (!fs.is_open()) {
-    throw std::runtime_error("Could not open file");
+    throw std::runtime_error(std::format("Could not open file. {}", std::stacktrace::current()));
   }
 
   auto line = std::string();
@@ -51,10 +53,10 @@ auto load_graph_list(const std::string& file_name) -> std::vector<UGraph<V>>
   graphs.reserve(dataset.data.size());
 
   if (dataset.columns.size() != 1) {
-    throw std::runtime_error("Invalid dataset format");
+    throw std::runtime_error(std::format("Invalid dataset format. {}", std::stacktrace::current()));
   }
   if (dataset.columns[0] != "id") {
-    throw std::runtime_error("Invalid dataset format");
+    throw std::runtime_error(std::format("Invalid dataset format. {}", std::stacktrace::current()));
   }
 
   for (const auto& row : dataset.data) {
