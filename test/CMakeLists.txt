@@ -24,6 +24,8 @@ add_executable(
     source/main.cpp
     source/solvers/isomorphism_runner.cpp
     source/solvers/isomorphism_tests.cpp
+    source/solvers/maximum_clique_runner.cpp
+    source/solvers/maximum_clique_tests.cpp
     source/solvers/maximum_independent_set_runner.cpp
     source/solvers/maximum_independent_set_tests.cpp
     source/solvers/minimum_vertex_cover_runner.cpp

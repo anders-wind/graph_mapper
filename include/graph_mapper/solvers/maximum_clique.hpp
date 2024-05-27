@@ -10,19 +10,19 @@
 #include "graph_mapper/solvers/permutations.hpp"
 
 /**
- * In graph theory, an independent set, stable set, coclique or anticlique is a set of vertices in a graph, no two of
- * which are adjacent
+ * @brief In computer science, the clique problem is the computational problem of finding cliques (subsets of vertices,
+ * all adjacent to each other, also called complete subgraphs) in a graph
  *
  */
 namespace wind::gm
 {
 
 template<is_graph GraphT>
-auto is_independent_set(const GraphT& graph, std::bitset<GraphT::num_vertices> solution) -> bool
+auto is_clique(const GraphT& graph, std::bitset<GraphT::num_vertices> solution) -> bool
 {
   for (auto i = 0UL; i < GraphT::num_vertices; i++) {
     for (auto j = i + 1; j < GraphT::num_vertices; j++) {
-      if (graph.has_edge(i, j) && solution[i] && solution[j]) {
+      if (!graph.has_edge(i, j) && solution[i] && solution[j]) {
         return false;
       }
     }
@@ -31,38 +31,42 @@ auto is_independent_set(const GraphT& graph, std::bitset<GraphT::num_vertices> s
 }
 
 template<is_graph GraphT>
-auto maximum_independent_set_size(const GraphT& graph) -> uint32_t
+auto maximum_clique_size(const GraphT& graph) -> uint32_t
 {
   auto max_size = 0UL;
-  for (auto i = 0UL; i <= GraphT::num_vertices; i++) {
-    auto had_independent_set = false;
+  for (auto i = 1UL; i <= GraphT::num_vertices; i++) {
+    auto had_clique = false;
     for (auto solution : generate_all_permutations_with_n_active_bits<GraphT::num_vertices>(i)) {
-      if (is_independent_set(graph, solution)) {
-        had_independent_set = true;
+      if (is_clique(graph, solution)) {
+        had_clique = true;
         max_size = i;
         break;
       }
     }
 
-    if (!had_independent_set) {
+    if (!had_clique) {
       return max_size;
     }
   }
 
-  return GraphT::num_vertices;
+  return max_size;
 }
 
 template<is_graph GraphT>
-auto maximum_independent_set(const GraphT& graph) -> std::vector<std::bitset<GraphT::num_vertices>>
+auto maximum_clique(const GraphT& graph) -> std::vector<std::bitset<GraphT::num_vertices>>
 {
-  auto solution_size = maximum_independent_set_size(graph);
+  auto solution_size = maximum_clique_size(graph);
+  if (solution_size == 0) {
+    return {};
+  }
+
   return generate_all_permutations_with_n_active_bits<GraphT::num_vertices>(solution_size)
-      | std::views::filter([&graph](auto solution) { return is_independent_set(graph, solution); })
+      | std::views::filter([&graph](auto solution) { return is_clique(graph, solution); })
       | std::ranges::to<std::vector>();
 }
 
 template<is_graph GraphT>
-struct MaximumIndependentSetSolution
+struct MaximumCliqueSolution
 {
   GraphT g;
   size_t maximum_size;
@@ -76,15 +80,14 @@ struct MaximumIndependentSetSolution
 };
 
 template<is_graph GraphT>
-auto solve_all_maximum_independent_set(const std::vector<GraphT>& graphs)
-    -> std::vector<MaximumIndependentSetSolution<GraphT>>
+auto solve_all_maximum_clique(const std::vector<GraphT>& graphs) -> std::vector<MaximumCliqueSolution<GraphT>>
 {
   return graphs
       | std::views::transform(
              [](const auto& g)
              {
-               auto solutions = maximum_independent_set(g);
-               return MaximumIndependentSetSolution<GraphT> {g, solutions.at(0).count(), solutions.size()};
+               auto solutions = maximum_clique(g);
+               return MaximumCliqueSolution<GraphT> {g, solutions.at(0).count(), solutions.size()};
              })
       | std::ranges::to<std::vector>();
 }
