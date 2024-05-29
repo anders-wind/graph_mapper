@@ -125,13 +125,7 @@ struct UndirectedGraph : public Graph
 
   constexpr auto with_added_vertex() const -> UndirectedGraph<V + 1>
   {
-    auto res = UGraph<V + 1>(0);
-    for (auto i = 0UL; i < V; i++) {
-      for (auto j = i + 1; j < V; j++) {
-        res.set_edge(i, j, this->has_edge(i, j));
-      }
-    }
-    return res;
+    return UGraph<V + 1>(this->edge_bits.to_ullong());
   }
 
   using graph_with_one_less_vertex_t =
