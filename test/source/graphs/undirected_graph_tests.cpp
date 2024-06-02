@@ -81,4 +81,28 @@ TEST_SUITE("index")
     }
   }
 }
+
+TEST_SUITE("set_edges_for_last_vertex")
+{
+  TEST_CASE("testing if the last vertex is connected to all other vertices")
+  {
+    auto g = UGraph<5>(0);
+    g.set_edges_for_last_vertex(std::bitset<4>(15));
+    for (auto i = 0UL; i < g.num_vertices - 1; i++) {
+      CHECK(g.has_edge(i, 4));
+      CHECK(g.has_edge(4, i));
+    }
+  }
+
+  TEST_CASE("testing if the last vertex is connected to no other vertices")
+  {
+    auto g = UGraph<5>(UGraph<5>::number_of_graphs - 1);
+    g.set_edges_for_last_vertex(std::bitset<4>(0));
+    for (auto i = 0UL; i < g.num_vertices - 1; i++) {
+      CHECK(!g.has_edge(i, 4));
+      CHECK(!g.has_edge(4, i));
+    }
+  }
+}
+
 }  // namespace wind::gm

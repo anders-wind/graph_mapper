@@ -117,21 +117,21 @@ auto get_all_base_forms_v3() -> std::vector<GraphT>
     auto prev_level = get_all_base_forms_v3<typename GraphT::graph_with_one_less_vertex_t, ShouldBeConnected>();
 
     auto new_level = std::vector<GraphT> {};
+    new_level.reserve(prev_level.size() * GraphT::num_vertices * GraphT::num_vertices);
     for (const auto& g : prev_level) {
       auto g_with_extra_vertex = g.with_added_vertex();
 
       for (auto to_connect_to : generate_all_permutations<GraphT::num_vertices - 1>()) {
         if (to_connect_to.count() == 0) {
           if constexpr (!ShouldBeConnected) {
-            new_level.emplace_back(base_form(g_with_extra_vertex));
+            // most be the lowest id graph, since none of the new edges have bits on
+            new_level.emplace_back(g_with_extra_vertex);
           }
           continue;
         }
 
         auto g_with_edges_to_new_vertex = g_with_extra_vertex;
-        for (auto i = 0UL; i < GraphT::num_vertices - 1; i++) {
-          g_with_edges_to_new_vertex.set_edge(i, GraphT::num_vertices - 1, to_connect_to[i]);
-        }
+        g_with_edges_to_new_vertex.set_edges_for_last_vertex(to_connect_to);
         new_level.emplace_back(base_form(g_with_edges_to_new_vertex));
       }
     }
@@ -142,8 +142,8 @@ auto get_all_base_forms_v3() -> std::vector<GraphT>
 template<is_graph GraphT>
 auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
 {
-  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto&) { return true; }));
-  // auto res = unique_graphs(get_all_base_forms_v3<GraphT, false>());
+  // auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto&) { return true; }));
+  auto res = unique_graphs(get_all_base_forms_v3<GraphT, false>());
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }
@@ -151,8 +151,8 @@ auto get_all_none_isomorphic_graphs() -> std::vector<GraphT>
 template<is_graph GraphT>
 auto get_all_none_isomorphic_connected_graphs() -> std::vector<GraphT>
 {
-  auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto& g) { return g.is_connected(); }));
-  // auto res = unique_graphs(get_all_base_forms_v3<GraphT, true>());
+  // auto res = unique_graphs(get_all_base_forms_v2<GraphT>([](const auto& g) { return g.is_connected(); }));
+  auto res = unique_graphs(get_all_base_forms_v3<GraphT, true>());
   std::ranges::sort(res, [](const auto& a, const auto& b) { return a.id() < b.id(); });
   return res;
 }

@@ -41,8 +41,10 @@ struct UndirectedGraph : public Graph
     }
   }();
 
+private:
   std::bitset<self_t::max_edges> edge_bits;
 
+public:
   /**
    * edge_combination_bit is the number describing the bits that represent the
    * activated edges.
@@ -70,12 +72,22 @@ struct UndirectedGraph : public Graph
     return vhigh * (vhigh - 1UL) / 2UL + vlow;
   }
 
-  constexpr void set_edge(uint32_t v1, uint32_t v2, bool val = true)
+  constexpr auto set_edge(uint32_t v1, uint32_t v2, bool val = true) -> void
   {
     if (v1 == v2) {
       return;
     }
     this->edge_bits.set(this->index(v1, v2), val);
+  }
+
+  constexpr auto set_edges_for_last_vertex(std::bitset<self_t::num_vertices - 1> edges) -> void
+  {
+    constexpr auto shift = self_t::max_edges - (self_t::num_vertices - 1);
+    // mask to only keep the original edges from the all vertices except the last one
+    constexpr auto mask = ~(std::bitset<self_t::max_edges>(self_t::number_of_graphs - 1) << shift);
+
+    auto new_edges = std::bitset<self_t::max_edges>(edges.to_ullong() << shift);
+    this->edge_bits = (this->edge_bits & mask) | new_edges;
   }
 
   constexpr auto has_edge(uint32_t v1, uint32_t v2) const -> bool
